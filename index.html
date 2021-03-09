@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>paint</title>
+  <style>
+    body {
+      height: 100vh;
+      width: 100vw;
+      margin: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <canvas id="paintCanvas"></canvas>
+  <script>
+    canvas = document.getElementById('paintCanvas');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    ctx = canvas.getContext('2d');
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+    canvas.addEventListener('mousedown', function (e) {
+      ctx.beginPath();
+      ctx.moveTo(e.x, e.y);
+      canvas.addEventListener('mousemove', handleMousemove);
+    })
+    canvas.addEventListener('mouseup', function (e) {
+      canvas.removeEventListener('mousemove', handleMousemove);
+    })
+    function handleMousemove(e) {
+      ctx.lineTo(e.x, e.y);
+      ctx.stroke();
+    }
+  </script>
+</body>
+
+</html>
