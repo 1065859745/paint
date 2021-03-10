@@ -146,7 +146,7 @@ canvas {
     connecting = index = 0;
 
     function socketOpen() {
-      socket = io("http://192.168.0.106:3000");
+      socket = io("https://woligiao.top/paintServer");
       connecting = setInterval(() => {
         connStatus.style.background = labelColors[index++ % 2];
       }, 1000);
