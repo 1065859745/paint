@@ -196,6 +196,7 @@
 
     function handleMouseDown(e) {
       current.a = current.b = [e.pageX, e.pageY];
+      socketStatus ? socket.emit('drawing', current) : currentArray.push(JSON.parse(JSON.stringify(current)));
       drawing(current);
       document.addEventListener('mousemove', handleMousemove);
     }
