@@ -130,11 +130,11 @@
     strokeColors = ['white', 'black'];
     lineSizes = [25, 5];
     strokeColorIndex = 0;
-    canvas.ondblclick = function () {
+    canvas.ondblclick = () => {
       current.strokeStyle = strokeColors[strokeColorIndex % 2];
       current.lineWidth = lineSizes[strokeColorIndex % 2];
       strokeColorIndex++;
-    }
+    };
 
     let socket, socketStatus, currentArray;
     connecting = index = 0;
@@ -142,7 +142,7 @@
     labelColors = ['#ddd', '#008CBA'];
     document.getElementById('socketSwitch').checked ? socketOpen() : socketClose();
 
-    canvas.addEventListener('mousedown', handleMouseDown)
+    canvas.addEventListener('mousedown', handleMouseDown);
     document.addEventListener('mouseup', handleMouseUp);
 
     canvas.addEventListener('touchstart', (e) => {
@@ -165,7 +165,7 @@
       socket.on('connect_error', () => {
         if (connecting) { return }
         connecting = setInterval(() => (connStatus.style.background = labelColors[index++ % 2]), 1000);
-      })
+      });
       socket.on('drawing', (d) => (drawing(d)));
     }
     function socketClose() {
@@ -199,8 +199,10 @@
       socketStatus ? socket.emit('drawing', current) : currentArray.push(JSON.parse(JSON.stringify(current)));
       drawing(current);
       document.addEventListener('mousemove', handleMousemove);
+      document.addEventListener('touchmove', handleMousemove);
     }
     function handleMouseUp(e) {
+      document.removeEventListener('touchmove', handleMousemove);
       document.removeEventListener('mousemove', handleMousemove);
       localStorage.setItem('private', JSON.stringify(currentArray));
     }
