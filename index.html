@@ -195,7 +195,8 @@
     }
 
     function handleMouseDown(e) {
-      current.a = [e.pageX, e.pageY];
+      current.a = current.b = [e.pageX, e.pageY];
+      drawing(current);
       document.addEventListener('mousemove', handleMousemove);
     }
     function handleMouseUp(e) {
