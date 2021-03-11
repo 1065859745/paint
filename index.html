@@ -7,88 +7,104 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
-    margin: 0;
-}
+      margin: 0;
+    }
 
-canvas {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    top: 0;
-    z-index: -1;
-}
+    .toolBar {
+      display: flex;
+      padding: 0 0.5rem 0 0.5rem;
+      height: 100vh;
+      width: 2rem;
+      justify-content: center;
+      flex-direction: column;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
 
-.switch {
-    border: none;
-    outline: 0;
-    padding: 0;
-    position: relative;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none
-}
+    .toolBar:hover {
+      background-color: rgba(255, 255, 255, 0.85);
+      ;
+    }
 
-.switch label {
-    background: #ddd;
-    color: transparent;
-    cursor: pointer;
-    display: inline-block;
-    position: relative;
-    text-indent: 100%;
-    width: 2rem;
-    height: 4rem;
-    transition: left 0.15s ease-out
-}
+    canvas {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      top: 0;
+      z-index: -1;
+    }
 
-.switch input {
-    left: 10px;
-    opacity: 0;
-    padding: 0;
-    position: absolute;
-    top: 9px
-}
+    .switch {
+      border: none;
+      outline: 0;
+      padding: 0;
+      position: relative;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none
+    }
 
-.switch input+label {
-    margin-left: 0;
-    margin-right: 0
-}
+    .switch label {
+      background: #ddd;
+      color: transparent;
+      cursor: pointer;
+      display: inline-block;
+      position: relative;
+      text-indent: 100%;
+      width: 2rem;
+      height: 4rem;
+      transition: left 0.15s ease-out
+    }
 
-.switch label:after {
-    background: #fff;
-    content: "a";
-    display: inline-block;
-    height: 1.5rem;
-    left: .25rem;
-    position: absolute;
-    top: .25rem;
-    width: 1.5rem;
-    -webkit-transition: top 0.15s ease-out;
-    -moz-transition: top 0.15s ease-out;
-    -o-transition: translate3d(0, 0, 0);
-    transition: top 0.15s ease-out;
-    -webkit-transform: translate3d(0, 0, 0);
-    -moz-transform: translate3d(0, 0, 0);
-    -ms-transform: translate3d(0, 0, 0);
-    -o-transform: translate3d(0, 0, 0);
-    transform: translate3d(0, 0, 0)
-}
+    .switch input {
+      left: 10px;
+      opacity: 0;
+      padding: 0;
+      position: absolute;
+      top: 9px
+    }
 
-.switch input:checked+label {
-    background: #008CBA
-}
+    .switch input+label {
+      margin-left: 0;
+      margin-right: 0
+    }
 
-.switch input:checked+label:after {
-    top: 2.2rem
-}
+    .switch label:after {
+      background: #fff;
+      content: "a";
+      display: inline-block;
+      height: 1.5rem;
+      left: .25rem;
+      position: absolute;
+      top: .25rem;
+      width: 1.5rem;
+      -webkit-transition: top 0.15s ease-out;
+      -moz-transition: top 0.15s ease-out;
+      -o-transition: translate3d(0, 0, 0);
+      transition: top 0.15s ease-out;
+      -webkit-transform: translate3d(0, 0, 0);
+      -moz-transform: translate3d(0, 0, 0);
+      -ms-transform: translate3d(0, 0, 0);
+      -o-transform: translate3d(0, 0, 0);
+      transform: translate3d(0, 0, 0)
+    }
+
+    .switch input:checked+label {
+      background: #008CBA
+    }
+
+    .switch input:checked+label:after {
+      top: 2.2rem
+    }
   </style>
   <title>paint</title>
 </head>
 
 <body>
-  <div
-    style="display:flex; margin-left: 0.5rem; height: 100vh;width: 2rem;justify-content: center;flex-direction: column;position: absolute;top: 0;left: 0;">
+  <div class="toolBar">
     <div class="switch">
       <input type="checkbox" id="socketSwitch" onchange="this.checked? socketOpen(): socketClose();">
       <label for="socketSwitch">
@@ -97,38 +113,19 @@ canvas {
     </div>
   </div>
 
-  <canvas id="paintCanvas">您的浏览器不支持HTML5 Canvas标签。</canvas>
+  <canvas id="paintCanvas">您的浏览器不支持HTML5 canvas标签。</canvas>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.1.2/socket.io.min.js"></script>
   <script>
     canvas = document.getElementById('paintCanvas');
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    window.onresize = handleResize;
     ctx = canvas.getContext('2d');
-    ctx.lineCap = ctx.lineJoin = 'round';
+
     current = {
+      lineCap: 'round',
+      lineJoin: 'round',
       lineWidth: 5,
-      strokeStyle: 'balck'
+      strokeStyle: 'balck',
     };
-
-    canvas.addEventListener('mousedown', function (e) {
-      current.x0 = e.clientX;
-      current.y0 = e.clientY;
-      document.addEventListener('mousemove', handleMousemove);
-    })
-    document.addEventListener('mouseup', function (e) {
-      document.removeEventListener('mousemove', handleMousemove);
-    })
-
-    canvas.addEventListener('touchstart', function (e) {
-      current.x0 = e.clientX;
-      current.y0 = e.clientY;
-      document.addEventListener('touchmove', handleMousemove);
-    });
-
-    document.addEventListener('touchend', function (e) {
-      document.removeEventListener('touchmove', handleMousemove);
-    }, false);
-
 
     strokeColors = ['white', 'black'];
     lineSizes = [25, 5];
@@ -139,36 +136,37 @@ canvas {
       strokeColorIndex++;
     }
 
-    let socket, socketStatus;
-    document.getElementById('socketSwitch').checked ? socketOpen() : null;
+    let socket, socketStatus, currentArray;
+    connecting = index = 0;
     connStatus = document.getElementById('connStatus');
     labelColors = ['#ddd', '#008CBA'];
-    connecting = index = 0;
+    document.getElementById('socketSwitch').checked ? socketOpen() : socketClose();
+
+    canvas.addEventListener('mousedown', handleMouseDown)
+    document.addEventListener('mouseup', handleMouseUp);
+
+    canvas.addEventListener('touchstart', (e) => {
+      current.coordinate = [[e.pageX, e.pageY]];
+      document.addEventListener('touchmove', handleMousemove);
+    });
+
+    document.addEventListener('touchend', handleMouseUp);
 
     function socketOpen() {
-      socket = io("https://woligiao.top/paintServer");
-      connecting = setInterval(() => {
-        connStatus.style.background = labelColors[index++ % 2];
-      }, 1000);
+      socket = io("https://woligiao.top");
+      socketStatus = true;
+      connecting = setInterval(() => (connStatus.style.background = labelColors[index++ % 2]), 1000);
       socket.on("connect", () => {
         clearInterval(connecting);
         connecting = index = 0;
         connStatus.style.background = 'none';
+        handleResize();
       });
       socket.on('connect_error', () => {
         if (connecting) { return }
-        connecting = setInterval(() => {
-          connStatus.style.background = labelColors[index++ % 2];
-        }, 1000);
+        connecting = setInterval(() => (connStatus.style.background = labelColors[index++ % 2]), 1000);
       })
-      socket.on('drawing', (d) => {
-        d.x0 = Number(d.x0) * Number(canvas.width);
-        d.y0 = Number(d.y0) * Number(canvas.height);
-        d.x1 = Number(d.x1) * Number(canvas.width);
-        d.y1 = Number(d.y1) * Number(canvas.height);
-        drawing(d);
-      })
-      socketStatus = true;
+      socket.on('drawing', (d) => (drawing(d)));
     }
     function socketClose() {
       socketStatus ? socket.close() : null;
@@ -176,34 +174,53 @@ canvas {
       clearInterval(connecting);
       connStatus.style.background = 'none';
       connecting = index = 0;
+      handleResize();
     }
 
-    function handleMousemove(e) {
-      if (socketStatus) {
-        socket.emit('drawing', {
-          x0: current.x0 / canvas.width,
-          y0: current.y0 / canvas.height,
-          x1: e.x / canvas.width,
-          y1: e.y / canvas.height,
-          strokeStyle: current.strokeStyle,
-          lineWidth: current.lineWidth
+    function handleResize() {
+      canvas.width = window.outerWidth;
+      canvas.height = window.outerHeight;
+      socketStatus ? null : loadPrivateData();
+    }
+    function loadPrivateData() {
+      private = localStorage.getItem('private');
+      if (/^\[\{.+\}\]$/.test(private)) {
+        JSON.parse(private).forEach(ele => {
+          drawing(ele);
         });
+        currentArray = JSON.parse(private);
+      } else {
+        currentArray = [];
       }
-      current.x1 = e.clientX;
-      current.y1 = e.clientY;
+    }
+
+    function handleMouseDown(e) {
+      current.a = [e.pageX, e.pageY];
+      document.addEventListener('mousemove', handleMousemove);
+    }
+    function handleMouseUp(e) {
+      document.removeEventListener('mousemove', handleMousemove);
+      localStorage.setItem('private', JSON.stringify(currentArray));
+    }
+    function handleMousemove(e) {
+      if (current.a[0] == e.pageX && current.a[1] == e.pageY) { return }
+      current.b = [e.pageX, e.pageY];
+      socketStatus ? socket.emit('drawing', current) : currentArray.push(JSON.parse(JSON.stringify(current)));
       drawing(current);
-      current.x0 = e.x;
-      current.y0 = e.y;
+      current.a = [e.pageX, e.pageY];
     }
 
     function drawing(d) {
       ctx.strokeStyle = d.strokeStyle;
       ctx.lineWidth = d.lineWidth;
+      ctx.lineCap = current.lineCap;
+      ctx.lineJoin = current.lineJoin;
       ctx.beginPath();
-      ctx.moveTo(d.x0, d.y0);
-      ctx.lineTo(d.x1, d.y1);
-      ctx.stroke();
+      ctx.moveTo(...d.a);
+      ctx.lineTo(...d.b);
       ctx.closePath();
+      ctx.stroke();
+
     }
   </script>
 </body>
