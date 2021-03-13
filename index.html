@@ -156,7 +156,7 @@
         connecting = index = 0;
         connStatus.style.background = 'none';
         handleResize();
-        socket.emit('load', drawingArr);
+
       });
       socket.on('connect_error', () => {
         if (connecting) { return }
@@ -171,19 +171,21 @@
       connStatus.style.background = 'none';
       connecting = index = 0;
       handleResize();
-      if (/^\[\{.+\}\]$/.test(localStorage.getItem('private'))) {
-        currentArray = JSON.parse(localStorage.getItem('private'));
-        drawingArr(currentArray);
-        return
-      }
-      currentArray = [];
     }
 
     function handleResize() {
       canvas.width = window.outerWidth;
       canvas.height = window.outerHeight;
+      socketStatus ? socket.emit('load', drawingArr) : loadLocalData();
     }
-
+    function loadLocalData() {
+      if (/^\[\{.+\}\]$/.test(localStorage.getItem('private'))) {
+        currentArray = JSON.parse(localStorage.getItem('private'));
+        drawingArr(currentArray);
+      }else {
+        currentArray = [];
+      }
+    }
     function drawingArr(data) {
       for (i = 0; i < data.length; i++) {
         drawing(data[i])
