@@ -106,7 +106,7 @@
 <body>
   <div class="toolBar">
     <div class="switch">
-      <input type="checkbox" id="socketSwitch" onchange="this.checked? socketOpen(): socketClose();">
+      <input type="checkbox" id="socketSwitch" checked='true' onchange="this.checked? socketOpen(): socketClose();">
       <label for="socketSwitch">
         <div id="connStatus" style="height: 100%; width: 100%;"></div>
       </label>
@@ -156,6 +156,7 @@
         connecting = index = 0;
         connStatus.style.background = 'none';
         handleResize();
+        socket.emit('load',loadData);
       });
       socket.on('connect_error', () => {
         if (connecting) { return }
@@ -170,23 +171,24 @@
       connStatus.style.background = 'none';
       connecting = index = 0;
       handleResize();
+      loadData(localStorage.getItem('private'));
     }
 
     function handleResize() {
       canvas.width = window.outerWidth;
       canvas.height = window.outerHeight;
-      socketStatus ? null : loadPrivateData();
     }
-    function loadPrivateData() {
-      private = localStorage.getItem('private');
-      if (/^\[\{.+\}\]$/.test(private)) {
-        currentArray = JSON.parse(private);
+    
+    function loadData(data) {
+      if (/^\[\{.+\}\]$/.test(data)) {
+        currentArray = JSON.parse(data);
         for (i = 0; i < currentArray.length; i++) {
           drawing(currentArray[i])
         };
-      } else {
-        currentArray = [];
+        return true;
       }
+      console.log('Load data error');
+      return false;
     }
 
     function handleMouseDown(e) {
