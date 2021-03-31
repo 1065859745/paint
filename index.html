@@ -261,9 +261,9 @@
     function cameraMove(offset) {
       coor = prompt('Enter coordinate', proxy.offset);
       while (coor != null) {
-        coor = coor.replace(/\s/g, '').replace(/，/, ',');
-        if (coor && arrayReg(`[${coor}]`)) {
-          proxy.offset = JSON.parse(`[${coor}]`);
+        c = coor.replace(/\s/g, '').replace(/，/, ',');
+        if (c && arrayReg(`[${c}]`)) {
+          proxy.offset = JSON.parse(`[${c}]`);
           coor = null;
         } else {
           coor = prompt('Coordinate format faild, enter coordinate', proxy.offset);
