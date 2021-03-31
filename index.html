@@ -17,7 +17,7 @@
       width: 2rem;
       justify-content: center;
       flex-direction: column;
-      position: fixed;
+      position: absolute;
       top: 0;
       left: 0;
     }
@@ -184,7 +184,7 @@
             }
           }
         }
-      })
+      });
 
       document.getElementById('socketSwitch').checked = proxy.socketStatus = localStorage.getItem('socketStatus') == 'false' ? false : true;
       window.onresize = () => { handleResize(); proxy.socketStatus ? socket.emit('load', proxy.cameraRange, drawingArr) : drawingArr(currentArray) };
